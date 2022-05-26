@@ -1,6 +1,9 @@
+using ApiMinimalPersonajesSeries.Authentication;
 using ApiMinimalPersonajesSeries.Data;
 using ApiMinimalPersonajesSeries.Models;
 using ApiMinimalPersonajesSeries.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,15 +17,14 @@ builder.Services.AddDbContext<SeriesPersonajesContext>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//HABILITAMOS LA SEGURIDAD
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
+    ("BasicAuthentication", null);
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 //HABILITAMOS LOS SERVICIOS COMO EN STARTUP
-
-if (app.Environment.IsDevelopment())
-{
-
-}
-
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -30,10 +32,15 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "";
 });
 
+//AÑADIMOS LA AUTORIZACION A NUESTRO SERVIDOR
+//EL ORDEN IMPORTA
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 
+//CADA METODO QUE DESEEMOS PROTEGER SE IMPLEMENTA CON [Authorize]
 //METODOS PARA PERSONAJES
-app.MapGet("/personajes", (RepositorySeriesPersonajes repo) =>
+app.MapGet("/personajes", [Authorize] (RepositorySeriesPersonajes repo) =>
 {
     return repo.GetPersonajes();
 });
@@ -45,7 +52,7 @@ app.MapGet("/personajes/find/{id}", (int id,
     return repo.FindPersonaje(id);
 });
 
-app.MapPost("/personajes/post", async (Personaje personaje,
+app.MapPost("/personajes/post", [Authorize] async (Personaje personaje,
     RepositorySeriesPersonajes repo) =>
 {
     await repo.AddPersonajeAsync(personaje.Nombre, personaje.Imagen
