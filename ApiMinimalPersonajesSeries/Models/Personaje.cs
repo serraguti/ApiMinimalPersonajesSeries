@@ -15,8 +15,8 @@ namespace ApiMinimalPersonajesSeries.Models
         public int IdSerie { get; set; }
         [Column("IMAGEN")]
         public string Imagen { get; set; }
-        [Column("USUARIO")]
-        public string Usuario { get; set; }
+        [Column("USERNAME")]
+        public string UserName { get; set; }
         [Column("PASSWORD")]
         public string Password { get; set; }
     }

@@ -35,7 +35,7 @@ namespace ApiMinimalPersonajesSeries.Repositories
         }
         
         public async Task AddPersonajeAsync(string nombre, string imagen
-            , int idserie, string usuario, string password)
+            , int idserie, string username, string password)
         {
             Personaje personaje = new Personaje()
             {
@@ -43,7 +43,7 @@ namespace ApiMinimalPersonajesSeries.Repositories
                 Nombre = nombre,
                 Imagen = imagen,
                 IdSerie = idserie,
-                Usuario = usuario, 
+                UserName = username, 
                 Password = password
             };
             await this.context.Personajes.AddAsync(personaje);

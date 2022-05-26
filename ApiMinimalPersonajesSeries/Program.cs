@@ -24,7 +24,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiMiminimaPersonajaes v1");
+    c.RoutePrefix = "";
+});
+
 app.UseHttpsRedirection();
 
 //METODOS PARA PERSONAJES
@@ -44,7 +49,7 @@ app.MapPost("/personajes/post", async (Personaje personaje,
     RepositorySeriesPersonajes repo) =>
 {
     await repo.AddPersonajeAsync(personaje.Nombre, personaje.Imagen
-        , personaje.IdSerie, personaje.Usuario, personaje.Password);
+        , personaje.IdSerie, personaje.UserName, personaje.Password);
     return Results.Ok();
 });
 
